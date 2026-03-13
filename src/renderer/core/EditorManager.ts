@@ -22,10 +22,10 @@ export class EditorManager {
     const editor = monaco.editor.create(el, {
       value: initialValue,
       language: "typescript",
-      theme: s.theme,
+      theme: s.theme, // This will now point to 'ghoul-dark' or 'paladin-light' from your settings
       fontSize: s.fontSize,
       fontFamily: s.fontFamily,
-      lineHeight: 24, // Aumentar line-height para mejor legibilidad
+      lineHeight: 24,
       minimap: { enabled: s.minimap },
       scrollBeyondLastLine: false,
       automaticLayout: true,
@@ -56,7 +56,6 @@ export class EditorManager {
     });
     this.editors.set(tabId, editor);
     
-    // Conectar callback de cambio de contenido si existe
     if (this.onContentChange) {
       const cb = this.onContentChange;
       editor.onDidChangeModelContent(() => cb(tabId));
@@ -68,11 +67,18 @@ export class EditorManager {
   get(tabId: TabId) {
     return this.editors.get(tabId) || null;
   }
+  
   forEach(cb: (e: monaco.editor.IStandaloneCodeEditor) => void) {
     this.editors.forEach(cb);
   }
+  
   dispose(tabId: TabId) {
-    this.editors.get(tabId)?.dispose();
-    this.editors.delete(tabId);
+    const editor = this.editors.get(tabId);
+    if (editor) {
+      // FIX: Dispose of the model to prevent RAM leaks when tabs are closed
+      editor.getModel()?.dispose(); 
+      editor.dispose();
+      this.editors.delete(tabId);
+    }
   }
 }
