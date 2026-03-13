@@ -31,7 +31,7 @@ export function addTabDom(id: string, title: string) {
   const el = document.createElement("div");
   el.className = "tab";
   el.setAttribute("data-tab-id", id);
-  el.innerHTML = `<span class="tab-title">${title}</span><button class="tab-close" title="Cerrar tab"><i class="fas fa-times"></i></button>`;
+  el.innerHTML = `<span class="tab-title">${title}</span><button class="tab-close" title="Close tab"><i class="fas fa-times"></i></button>`;
   container.appendChild(el);
 }
 
