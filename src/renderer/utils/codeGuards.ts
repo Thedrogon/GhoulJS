@@ -42,24 +42,24 @@ export function hasIncompleteStatement(code: string) {
     /\bif\s*\(.*\)\s*$/,
     /\belse\s*$/,
     /\bfor\s*\(.*\)\s*$/,
-    /\bfor\s*\(?[^)]*$/,           // for incompleto (sin cerrar paréntesis)
-    /\bfor\s*$/,                    // solo "for"
+    /\bfor\s*\(?[^)]*$/,            // incomplete for (without closing parenthesis)
+    /\bfor\s*$/,                    // only "for"
     /\bwhile\s*\(.*\)\s*$/,
-    /\bwhile\s*\(?[^)]*$/,         // while incompleto
-    /\bwhile\s*$/,                  // solo "while"
+    /\bwhile\s*\(?[^)]*$/,          // incomplete while
+    /\bwhile\s*$/,                  // only "while"
     /\bfunction\s+\w*\s*\([^)]*\)\s*$/,
-    /\bfunction\s*$/,               // solo "function"
+    /\bfunction\s*$/,               // only "function"
     /\b(const|let|var)\s+\w+\s*=\s*$/,
-    /\b(const|let|var)\s*$/,        // solo const/let/var
+    /\b(const|let|var)\s*$/,        // only const/let/var
     /\w+\s*=\s*$/,
     /\w+\s*\(\s*$/,
     /\w+\s*\.\s*$/,
     /\binterface\s+\w*\s*$/,
     /\btype\s+\w+\s*=\s*$/,
-    /\bclass\s+\w*\s*$/,            // solo "class"
-    /\bswitch\s*\(?[^)]*$/,         // switch incompleto
-    /\btry\s*$/,                    // solo "try"
-    /\bcatch\s*\(?[^)]*$/,          // catch incompleto
+    /\bclass\s+\w*\s*$/,            // only "class"
+    /\bswitch\s*\(?[^)]*$/,         // incomplete switch
+    /\btry\s*$/,                    // only "try"
+    /\bcatch\s*\(?[^)]*$/,          // incomplete catch
   ];
   return p.some((rx) => rx.test(trimmed));
 }
@@ -74,7 +74,7 @@ export function looksLikeIncompleteTyping(code: string) {
     /^\w+\s*\{$/,
     /^\w+\s*:\s*$/,
     /^\s*\.\w*$/,
-    /^(while|for|if)\s*\([^)]*\)\s*$/,  // loop/if sin cuerpo
+    /^(while|for|if)\s*\([^)]*\)\s*$/,  // loop/if without body
   ];
   return p.some((rx) => rx.test(last));
 }
