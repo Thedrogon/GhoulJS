@@ -7,7 +7,6 @@ export interface AppSettings {
   lineNumbers: boolean;
   tabSize: number;
   fontFamily: string;
-  language: string;
 }
 
 export interface ThemeDefinition {
