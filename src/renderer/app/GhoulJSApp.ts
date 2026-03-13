@@ -17,9 +17,8 @@ import { appendOutput, clearOutput, appendSecurity } from "../ui/Output";
 import { AUTO_RUN_DELAY } from "../config/constants";
 import { ExecutionEngine } from "../core/ExecutionEngine";
 import "../config/electron.d.ts";
-import { mountLanguageHandler } from "../services/I18n";
 
-export class WizardJSApp {
+export class GhoulJSApp {
   private store = new SettingsStore();
   private editors = new EditorManager(() => this.store.get());
   private tabs = new TabsManager();
@@ -30,7 +29,6 @@ export class WizardJSApp {
     configureMonaco();
     registerThemes();
     
-    // Configurar callback global para auto-run en todos los editores
     this.editors.setOnContentChange((tabId) => this.scheduleAutoRun(tabId));
     
     const first = this.tabs.initFirstTab(this.getWelcomeCode());
@@ -45,15 +43,10 @@ export class WizardJSApp {
     mountToolbar(
       () => this.executeCode(),
       () => clearOutput(this.tabs.active()),
-      () => this.newFile(),
-      () => this.openFile(),
-      () => this.saveFile(),
       () => this.stopExecution()
     );
     
-    // Inicializar split resizer (usa event delegation, funciona con elementos dinámicos)
     mountSplitResizer();
-    mountLanguageHandler();
     mountSettingsUI(this.store, () => this.applyEditorSettings());
     mountTabsHandlers(
       this.tabs,
@@ -67,7 +60,7 @@ export class WizardJSApp {
 
   private setupMenuListeners() {
     const api = window.electronAPI;
-    if (!api) return; // No disponible fuera de Electron
+    if (!api) return; 
     
     api.onMenuNewFile(() => this.newFile());
     api.onMenuOpenFile(() => this.openFile());
@@ -78,14 +71,13 @@ export class WizardJSApp {
   }
 
   private showAbout() {
-    // Modal simple de About
     const version = "1.0.0";
-    alert(`WizardJS v${version}\n\nThe Ultimate JavaScript & TypeScript Playground\n\nCreado por Francisco Brito`);
+    alert(`GhoulJS v${version}\n\nThe Lean JavaScript & TypeScript Playground\n\nBuilt for speed.`);
   }
 
   private applyEditorSettings() {
     const s = this.store.get();
-    const lineHeight = 24; // Fijo para consistencia
+    const lineHeight = 24; 
     
     this.editors.forEach((e) => {
       e.updateOptions({
@@ -100,10 +92,8 @@ export class WizardJSApp {
       });
     });
 
-    // Sincroniza el panel de salida con tipografía y altura de línea del editor
     document.querySelectorAll(".output-container").forEach((el) => {
       const h = el as HTMLElement;
-      // Envolver font-family en comillas para CSS
       h.style.setProperty("--editor-font-family", `"${s.fontFamily}", monospace`);
       h.style.setProperty("--editor-font-size", `${s.fontSize}px`);
       h.style.setProperty("--editor-line-height", `${lineHeight}px`);
@@ -128,7 +118,6 @@ export class WizardJSApp {
     switchTo(id);
     setTimeout(() => {
       this.editors.get(id)?.layout?.();
-      // Actualiza variables de tipografía del panel de salida según el editor activo
       this.applyEditorSettings();
     }, 50);
   }
@@ -148,7 +137,7 @@ export class WizardJSApp {
     const td = this.tabs.get(id);
     if (
       td?.isDirty &&
-      !confirm(`¿Quieres guardar los cambios en ${td.title}?`)
+      !confirm(`Do you want to save changes to ${td.title}?`)
     ) {
       // user chose not to save, proceed to close
     }
@@ -175,12 +164,11 @@ export class WizardJSApp {
 
   private stopExecution() {
     this.engine.abort();
-    appendSecurity(this.tabs.active(), "Ejecución detenida por el usuario");
+    appendSecurity(this.tabs.active(), "Execution stopped by user");
   }
 
   private async openFile() {
     try {
-      // File System Access API
       const [fileHandle] = await (window as any).showOpenFilePicker({
         types: [
           {
@@ -201,7 +189,6 @@ export class WizardJSApp {
       const content = await file.text();
       const name = file.name;
 
-      // Crear nuevo tab con el contenido del archivo
       const id = this.tabs.create();
       this.tabs.set(id, { title: name, content, isDirty: false, file: name });
       addTabDom(id, name);
@@ -209,12 +196,10 @@ export class WizardJSApp {
       setTimeout(() => {
         this.editors.create(id, content);
         this.switchTo(id);
-        // Actualizar título del tab en el DOM
         const tabEl = document.querySelector(`[data-tab-id="${id}"].tab .tab-title`);
         if (tabEl) tabEl.textContent = name;
       }, 50);
     } catch (err: any) {
-      // Usuario canceló o error
       if (err.name !== "AbortError") {
         console.error("Error opening file:", err);
       }
@@ -248,11 +233,9 @@ export class WizardJSApp {
       await writable.write(content);
       await writable.close();
 
-      // Actualizar estado del tab
       const fileName = fileHandle.name;
       this.tabs.set(activeId, { title: fileName, file: fileName, isDirty: false });
       
-      // Actualizar título en el DOM
       const tabEl = document.querySelector(`[data-tab-id="${activeId}"].tab .tab-title`);
       if (tabEl) tabEl.textContent = fileName;
     } catch (err: any) {
@@ -279,19 +262,19 @@ export class WizardJSApp {
   }
 
   private getWelcomeCode() {
-    return `// Welcome to WizardJS! 🧙‍♂️
-// Write JavaScript or TypeScript and see results instantly
+    return `// Welcome to GhoulJS! 💀
+// A stripped-down, high-performance execution environment.
 
-function greet(name: string): string {
-  return \`Hello, \${name}! Welcome to WizardJS.\`;
+function ignite(target: string): string {
+  return \`Compiling \${target}... System ready.\`;
 }
 
-const message = greet("Developer");
-console.log(message);
+const status = ignite("payload");
+console.log(status);
 
-// Try editing this code - it runs automatically!
-const numbers = [1, 2, 3, 4, 5];
-const doubled = numbers.map(n => n * 2);
-doubled`;
+// Code executes automatically upon valid AST completion.
+const metrics = [1024, 2048, 4096];
+const allocated = metrics.map(m => m * 2);
+allocated`;
   }
 }

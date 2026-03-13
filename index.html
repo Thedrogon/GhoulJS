@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>WizardJS - JavaScript Playground</title>
+    <title>GhoulJS - JavaScript Playground</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -10,67 +10,45 @@
   </head>
   <body>
     <div id="app">
-      <!-- Barra de tabs -->
       <div class="tabs-bar">
         <div class="tabs-list"></div>
-        <button class="add-tab-btn" data-title-i18n="newTabTooltip">
+        <button class="add-tab-btn" title="New Tab">
           <i class="fas fa-plus"></i>
         </button>
       </div>
 
-      <!-- Workspace: sidebar + main content -->
       <div class="workspace">
         <aside class="sidebar">
           <nav class="sidebar-nav">
-            <button id="runBtn" class="sidebar-btn" data-title-i18n="runTooltip">
+            <button id="runBtn" class="sidebar-btn" title="Run Code (Cmd/Ctrl + R)">
               <i class="fas fa-play"></i>
             </button>
-            <button id="stopBtn" class="sidebar-btn sidebar-btn-stop" data-title-i18n="stopTooltip">
+            <button id="stopBtn" class="sidebar-btn sidebar-btn-stop" title="Stop Execution (Cmd/Ctrl + .)">
               <i class="fas fa-stop"></i>
             </button>
-            <button id="newBtn" class="sidebar-btn" data-title-i18n="newTooltip">
-              <i class="fas fa-file"></i>
-            </button>
-            <button id="openBtn" class="sidebar-btn" data-title-i18n="openTooltip">
-              <i class="fas fa-folder-open"></i>
-            </button>
-            <button id="saveBtn" class="sidebar-btn" data-title-i18n="saveTooltip">
-              <i class="fas fa-save"></i>
-            </button>
             <div class="sidebar-divider"></div>
-            <button
-              id="clearBtn"
-              class="sidebar-btn"
-              data-title-i18n="clearTooltip"
-            >
+            <button id="clearBtn" class="sidebar-btn" title="Clear Output (Cmd/Ctrl + K)">
               <i class="fas fa-trash"></i>
             </button>
           </nav>
 
           <div class="sidebar-bottom">
-            <button
-              id="settingsBtn"
-              class="sidebar-btn"
-              data-title-i18n="settingsTooltip"
-            >
+            <button id="settingsBtn" class="sidebar-btn" title="Settings (Cmd/Ctrl + ,)">
               <i class="fas fa-cog"></i>
             </button>
           </div>
         </aside>
 
-        <!-- Contenido principal -->
         <main class="main-content">
-          <!-- Contenido de los tabs -->
           <div class="tabs-content"></div>
         </main>
       </div>
     </div>
 
-    <!-- Panel de Configuraciones (fuera del app) -->
     <div id="settingsPanel" class="settings-panel">
       <div class="settings-modal">
         <div class="settings-header">
-          <h3 data-i18n="configuration"></h3>
+          <h3>Configuration</h3>
           <button id="closeSettingsBtn" class="close-settings-btn">
             <i class="fas fa-times"></i>
           </button>
@@ -78,31 +56,16 @@
         <div class="settings-modal-content">
           <div class="settings-content">
             <div class="settings-section">
-              <h4 data-i18n="general"></h4>
+              <h4>Appearance</h4>
               <div class="setting-item">
-                <label><span data-i18n="language"></span></label>
-                <select id="language-select">
-                  <option value="en">English</option>
-                  <option value="es">Español</option>
-                  <option value="de">Deutsch (Deutschland)</option>
-                  <option value="de_CH">Deutsch (Schweiz)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="settings-section">
-              <h4 data-i18n="appearance"></h4>
-              <div class="setting-item">
-                <label data-i18n="theme"></label>
+                <label>Theme</label>
                 <select id="theme-select">
-                  <option value="github-dark">GitHub Dark</option>
-                  <option value="tomorrow-night-bright">
-                    Tomorrow Night Bright
-                  </option>
+                  <option value="ghoul-dark">Ghoul Dark</option>
+                  <option value="paladin-light">Paladin Light</option>
                 </select>
               </div>
               <div class="setting-item">
-                <label data-i18n="font"></label>
+                <label>Font Family</label>
                 <select id="font-family-select">
                   <option value="JetBrains Mono">JetBrains Mono</option>
                   <option value="Fira Code">Fira Code</option>
@@ -112,7 +75,7 @@
                 </select>
               </div>
               <div class="setting-item">
-                <label data-i18n="fontSize"></label>
+                <label>Font Size</label>
                 <div class="font-size-input-wrapper">
                   <input
                     type="number"
@@ -128,58 +91,58 @@
             </div>
 
             <div class="settings-section">
-              <h4 data-i18n="editor"></h4>
+              <h4>Editor</h4>
               <div class="setting-item">
                 <label>
                   <input type="checkbox" id="word-wrap-toggle" checked />
-                  <span data-i18n="wordWrap"></span>
+                  <span>Word Wrap</span>
                 </label>
               </div>
               <div class="setting-item">
                 <label>
                   <input type="checkbox" id="minimap-toggle" />
-                  <span data-i18n="minimap"></span>
+                  <span>Minimap</span>
                 </label>
               </div>
               <div class="setting-item">
                 <label>
                   <input type="checkbox" id="auto-run-toggle" checked />
-                  <span data-i18n="autoRun"></span>
+                  <span>Auto-run Code</span>
                 </label>
               </div>
               <div class="setting-item">
                 <label>
                   <input type="checkbox" id="line-numbers-toggle" />
-                  <span data-i18n="showLineNumbers"></span>
+                  <span>Show Line Numbers</span>
                 </label>
               </div>
               <div class="setting-item">
-                <label data-i18n="tabSize"></label>
+                <label>Tab Size</label>
                 <select id="tab-size-select">
-                  <option value="2">2 <span data-i18n="tabsLC"></span></option>
-                  <option value="4">4 <span data-i18n="tabsLC"></span></option>
-                  <option value="8">8  <span data-i18n="tabsLC"></span></option>
+                  <option value="2">2 spaces</option>
+                  <option value="4">4 spaces</option>
+                  <option value="8">8 spaces</option>
                 </select>
               </div>
             </div>
 
             <div class="settings-section">
-              <h4 data-i18n="shortcuts"></h4>
+              <h4>Shortcuts</h4>
               <div class="shortcut-item">
-                <span data-i18n="runCode"></span>
-                <kbd>⌘R</kbd>
+                <span>Run Code</span>
+                <kbd>Cmd/Ctrl + R</kbd>
               </div>
               <div class="shortcut-item">
-                <span data-i18n="newTab"></span>
-                <kbd>⌘T</kbd>
+                <span>New File</span>
+                <kbd>Cmd/Ctrl + N</kbd>
               </div>
               <div class="shortcut-item">
-                <span data-i18n="saveFile"></span>
-                <kbd>⌘S</kbd>
+                <span>Save File</span>
+                <kbd>Cmd/Ctrl + S</kbd>
               </div>
               <div class="shortcut-item">
-                <span data-i18n="openSettings"></span>
-                <kbd>⌘,</kbd>
+                <span>Open Settings</span>
+                <kbd>Cmd/Ctrl + ,</kbd>
               </div>
             </div>
           </div>

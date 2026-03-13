@@ -3,13 +3,11 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { autoUpdater } from 'electron-updater';
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -22,29 +20,24 @@ const createWindow = () => {
       contextIsolation: true,
     },
     icon: path.join(__dirname, '../build/icon.png'),
-    show: false, // Don't show until ready
+    show: false, 
   });
 
-  // Show window when ready to prevent visual flash
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
 
-  // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
-  // Open the DevTools in development
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
   }
 
-  // Create application menu
   createMenu();
-
   return mainWindow;
 };
 
@@ -73,7 +66,6 @@ const createMenu = () => {
           label: 'New',
           accelerator: 'CmdOrCtrl+N',
           click: () => {
-            // Send message to renderer to create new file
             BrowserWindow.getFocusedWindow()?.webContents.send('menu-new-file');
           }
         },
@@ -175,15 +167,9 @@ const createMenu = () => {
       role: 'help',
       submenu: [
         {
-          label: 'About WizardJS',
+          label: 'About GhoulJS',
           click: () => {
             BrowserWindow.getFocusedWindow()?.webContents.send('menu-about');
-          }
-        },
-        {
-          label: 'Learn More',
-          click: async () => {
-            await shell.openExternal('https://github.com/FranciscoJBrito/WizardJS');
           }
         }
       ]
@@ -194,14 +180,8 @@ const createMenu = () => {
   Menu.setApplicationMenu(menu);
 };
 
-// ============================================
-// Auto-Update Configuration
-// ============================================
 function setupAutoUpdater() {
-  // Configurar logging
   autoUpdater.logger = console;
-  
-  // No descargar automáticamente, preguntar primero
   autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = true;
 
@@ -212,9 +192,9 @@ function setupAutoUpdater() {
   autoUpdater.on('update-available', (info: { version: string }) => {
     dialog.showMessageBox({
       type: 'info',
-      title: 'Actualización disponible',
-      message: `Una nueva versión (${info.version}) está disponible. ¿Deseas descargarla ahora?`,
-      buttons: ['Descargar', 'Más tarde'],
+      title: 'Update Available',
+      message: `A new version (${info.version}) is available. Do you want to download it now?`,
+      buttons: ['Download', 'Later'],
       defaultId: 0,
     }).then((result) => {
       if (result.response === 0) {
@@ -234,9 +214,9 @@ function setupAutoUpdater() {
   autoUpdater.on('update-downloaded', (info: { version: string }) => {
     dialog.showMessageBox({
       type: 'info',
-      title: 'Actualización lista',
-      message: `La versión ${info.version} se ha descargado. ¿Reiniciar ahora para instalar?`,
-      buttons: ['Reiniciar', 'Más tarde'],
+      title: 'Update Ready',
+      message: `Version ${info.version} has been downloaded. Restart now to install?`,
+      buttons: ['Restart', 'Later'],
       defaultId: 0,
     }).then((result) => {
       if (result.response === 0) {
@@ -249,7 +229,6 @@ function setupAutoUpdater() {
     console.error('Auto-updater error:', err);
   });
 
-  // Verificar actualizaciones después de 3 segundos
   setTimeout(() => {
     autoUpdater.checkForUpdates().catch((err: Error) => {
       console.error('Failed to check for updates:', err);
@@ -257,21 +236,13 @@ function setupAutoUpdater() {
   }, 3000);
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   createWindow();
-  
-  // Solo verificar actualizaciones en producción
   if (process.env.NODE_ENV !== 'development') {
     setupAutoUpdater();
   }
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -279,12 +250,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

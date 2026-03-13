@@ -1,8 +1,8 @@
 import "../index.css";
-import { WizardJSApp } from "./app/WizardJSApp";
+import { GhoulJSApp } from "./app/GhoulJSApp";
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => new WizardJSApp());
+  document.addEventListener("DOMContentLoaded", () => new GhoulJSApp());
 } else {
-  new WizardJSApp();
+  new GhoulJSApp();
 }
