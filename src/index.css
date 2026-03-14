@@ -74,6 +74,7 @@ body {
   justify-content: center;
   background: transparent;
   border: none;
+  outline: none;
   border-radius: 4px;
   color: #cccccc;
   font-size: 14px;
@@ -189,15 +190,16 @@ body {
 .tabs-bar {
   display: flex;
   align-items: center;
-  background: #000000;
-  border-bottom: 1px solid #21262d;
+  background: #1e1e1e; /* Match theme background exactly */
   height: 40px;
   flex-shrink: 0;
   padding-left: 80px;
   -webkit-app-region: drag; 
   position: relative; 
   z-index: 20;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2); /* Use shadow instead of border */
 }
+
 
 canvas.decorationsOverviewRuler {
   display: none;
@@ -210,14 +212,7 @@ canvas.decorationsOverviewRuler {
 
 /* Overlay para ocultar el borde vertical de la sidebar detrás del topbar */
 .tabs-bar::before {
-  content: "";
-  position: absolute;
-  left: -1px;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: #000000;
-  pointer-events: none;
+  display: none;
 }
 
 .tabs-list {
@@ -239,7 +234,7 @@ canvas.decorationsOverviewRuler {
   padding: 8px 12px;
   background: transparent;
   border: none;
-  border-right: 1px solid #30363d;
+  border-right: 1px solid rgba(255,255,255,0.05);
   border-left: 1px solid #30363d;
   color: #7d8590;
   font-size: 13px;
@@ -250,6 +245,7 @@ canvas.decorationsOverviewRuler {
   max-width: 240px;
   position: relative;
   white-space: nowrap;
+  outline: none;
 }
 
 .tab:hover {
@@ -815,4 +811,44 @@ kbd {
   color: #7d8590;
   font-size: 11px;
   opacity: 0.8;
+}
+
+/* Sequential Output Styles */
+.output-container {
+  padding: 8px 16px;
+}
+
+.output-line-sequential {
+  display: flex;
+  align-items: flex-start;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: 1.5;
+}
+
+.output-line-sequential:last-child {
+  border-bottom: none;
+}
+
+.output-line-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  color: #8b949e;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 12px;
+  margin-top: 2px;
+  min-width: 32px;
+  user-select: none;
+}
+
+.output-content {
+  flex: 1;
+  white-space: pre-wrap; /* Allows long objects to wrap properly */
+  word-break: break-all;
 }

@@ -15,7 +15,7 @@ function safeStringify(obj: any, indent = 2): string {
   let cache: any[] = [];
   const retVal = JSON.stringify(
     obj,
-    (key, value) => {
+    (_, value) => {
       if (typeof value === 'object' && value !== null) {
         if (value instanceof Map) return `Map(${value.size}) { ... }`;
         if (value instanceof Set) return `Set(${value.size}) { ... }`;
@@ -53,57 +53,56 @@ function stringifyWithType(val: any): OutputItem {
   return { text, type };
 }
 
-const lineOutputs = new Map<string, Map<number, OutputItem[]>>();
-let lastResultLine = new Map<string, number>();
+//const lineOutputs = new Map<string, Map<number, OutputItem[]>>();
+//let lastResultLine = new Map<string, number>();
 
 export function appendOutput(tabId: string, type: string, args: any[]) {
-  const c = document.querySelector(`[data-tab-id="${tabId}"].output-container`) as HTMLElement | null;
-  if (!c) return;
+  const container = document.querySelector(`[data-tab-id="${tabId}"].output-container`) as HTMLElement | null;
+  if (!container) return;
 
   if (type === "error") {
-    renderError(c, args[0]);
+    renderError(container, args[0]);
+    scrollToBottom(container);
     return;
   }
 
-  if (!lineOutputs.has(tabId)) {
-    lineOutputs.set(tabId, new Map());
-    lastResultLine.set(tabId, 0);
-  }
-  const outputs = lineOutputs.get(tabId)!;
-
-  if (type === "result" && typeof args?.[0] === "number") {
-    const resultLine = args[0] as number;
-    const val = args[1];
-    
-    if (!outputs.has(resultLine)) outputs.set(resultLine, []);
-    outputs.get(resultLine)!.push(stringifyWithType(val));
-    lastResultLine.set(tabId, resultLine);
-    
-    renderOutput(c, tabId);
-    return;
-  }
-
-  let consoleLine: number | undefined;
+  let lineNo: number | undefined;
   let realArgs = args;
-  
+
   if (typeof args[0] === "number") {
-    consoleLine = args[0];
+    lineNo = args[0];
     realArgs = args.slice(1);
   }
-  
-  const targetLine = consoleLine || lastResultLine.get(tabId) || 1;
-  
-  if (!outputs.has(targetLine)) outputs.set(targetLine, []);
-  
-  for (const arg of realArgs) {
-    outputs.get(targetLine)!.push(stringifyWithType(arg));
+
+  const row = document.createElement("div");
+  row.className = "output-line-sequential";
+
+  // Create Line Badge if available
+  if (lineNo !== undefined) {
+    const badge = document.createElement("span");
+    badge.className = "output-line-badge";
+    badge.textContent = `L${lineNo}`;
+    row.appendChild(badge);
   }
-  
-  renderOutput(c, tabId);
+
+  const content = document.createElement("div");
+  content.className = "output-content";
+
+  realArgs.forEach((arg, idx) => {
+    if (idx > 0) content.appendChild(document.createTextNode("  "));
+    const item = stringifyWithType(arg);
+    const span = document.createElement("span");
+    span.className = `output-${item.type}`;
+    span.textContent = item.text;
+    content.appendChild(span);
+  });
+
+  row.appendChild(content);
+  container.appendChild(row);
+  scrollToBottom(container);
 }
 
 function renderError(container: HTMLElement, errorMsg: string) {
-  container.innerHTML = "";
   const errorDiv = document.createElement("div");
   errorDiv.className = "output-error-container";
   
@@ -126,46 +125,9 @@ function renderError(container: HTMLElement, errorMsg: string) {
   container.appendChild(errorDiv);
 }
 
-function renderOutput(container: HTMLElement, tabId: string) {
-  const outputs = lineOutputs.get(tabId);
-  if (!outputs) return;
-  
-  container.innerHTML = "";
-  const maxLine = outputs.size > 0 ? Math.max(...outputs.keys()) : 0;
-  
-  for (let i = 1; i <= maxLine; i++) {
-    const row = document.createElement("div");
-    row.className = "output-line";
-    
-    const lno = document.createElement("span");
-    lno.className = "output-lno";
-    lno.textContent = String(i);
-    
-    const content = document.createElement("div");
-    content.className = "output-content";
-    
-    const lineContent = outputs.get(i);
-    if (lineContent && lineContent.length > 0) {
-      lineContent.forEach((item, idx) => {
-        if (idx > 0) content.appendChild(document.createTextNode("  "));
-        const span = document.createElement("span");
-        span.className = `output-${item.type}`;
-        span.textContent = item.text;
-        content.appendChild(span);
-      });
-    }
-    
-    row.appendChild(lno);
-    row.appendChild(content);
-    container.appendChild(row);
-  }
-}
-
 export function clearOutput(tabId: string) {
   const c = document.querySelector(`[data-tab-id="${tabId}"].output-container`) as HTMLElement | null;
   if (c) c.innerHTML = "";
-  lineOutputs.delete(tabId);
-  lastResultLine.delete(tabId);
 }
 
 export const appendSecurity = (tabId: string, msg: string) => {
@@ -175,4 +137,9 @@ export const appendSecurity = (tabId: string, msg: string) => {
   line.className = "output-security-error";
   line.textContent = `🛡️ [Security] ${msg}`;
   c.appendChild(line);
+  scrollToBottom(c);
 };
+
+function scrollToBottom(container: HTMLElement) {
+  container.scrollTop = container.scrollHeight;
+}
