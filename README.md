@@ -6,6 +6,10 @@ A high-performance, open-source JavaScript and TypeScript scratchpad. Built as a
 
 GhoulJS provides a stripped-down, lightning-fast execution environment for developers. It eliminates UI bloat and focuses strictly on what matters: an integrated Monaco editor, secure AST-based code guards, and real-time execution of JS/TS.
 
+v0 is forked from [WizardJS](https://github.com/FranciscoJBrito/WizardJS), stripped off its Internalizations and fixed its bloated elements.
+
+v1 (upcoming) will have portions rewritten in Rust inorder to lean out the app further.
+
 ## Features
 
 - **Zero-Config TypeScript:** Native, on-the-fly TS transpilation.
@@ -24,18 +28,26 @@ GhoulJS provides a stripped-down, lightning-fast execution environment for devel
 ### Installation
 
 ```bash
-git clone [https://github.com/thedrogon/GhoulJS.git](https://github.com/thedrogon/GhoulJS.git)
+
+# Clone the repo
+git clone https://github.com/thedrogon/GhoulJS.git
+
 cd GhoulJS
+
+# Get the running dependencies
 npm install
+
 # Start development server
 npm run dev
 
 # Package application binaries
 npm run make
-
 ```
 
+## File Structure
+
 ```bash
+
 src/
 ├── main.ts                    # Electron main process & OS bridging
 ├── preload.ts                 # Secure IPC context isolation
