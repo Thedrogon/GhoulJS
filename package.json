@@ -15,7 +15,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "clean": "rm -rf out dist .vite"
+    "clean": "rm -rf out dist .vite node_modules"
   },
   "author": {
     "name": "Sayanjit Mukherjee",
