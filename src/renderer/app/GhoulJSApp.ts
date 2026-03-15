@@ -257,6 +257,9 @@ export class GhoulJSApp {
       } else if (cmdOrCtrl && e.key === ".") {
         e.preventDefault();
         this.stopExecution();
+      }else if (cmdOrCtrl && e.key === "k") { // <-- ADD THIS BLOCK
+        e.preventDefault();
+        clearOutput(this.tabs.active());
       }
     });
   }
